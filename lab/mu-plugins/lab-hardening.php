@@ -58,7 +58,10 @@ if ($lab_on('header')) {
     });
 }
 
-// 5) Nessuna versione di WordPress nel meta generator
+// 5) Nessuna versione di WordPress nel meta generator NÉ nei feed.
+// remove_action('wp_head', 'wp_generator') da solo lascia <generator> nei feed RSS:
+// il filtro 'the_generator' copre tutti i formati (correzione della piattaforma v4).
 if ($lab_on('versione')) {
     remove_action('wp_head', 'wp_generator');
+    add_filter('the_generator', '__return_empty_string');
 }
