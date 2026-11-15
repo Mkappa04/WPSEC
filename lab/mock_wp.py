@@ -18,6 +18,11 @@ PROFILI = {
     8084: set(),                      # solo per provare il rilevamento WAF (non è nella ground truth)
 }
 PORTE_CON_WAF = {8084}
+# wp-tricky: casi difficili per lo scanner v3 (blocco WAF scambiato per protezione,
+# falso directory listing, versione esposta solo nel feed). Serve a misurare
+# l'Evidence Validation Agent della piattaforma v4.
+PORTE_TRICKY = {8085}
+PROFILI[8085] = {"author", "xmlrpc", "header", "versione"}
 
 HEADER_SICUREZZA = {
     "Strict-Transport-Security": "max-age=300",
@@ -34,10 +39,18 @@ METODI = (b'<?xml version="1.0"?><methodResponse><params><param><value><array><d
           b'</data></array></value></param></params></methodResponse>')
 
 
-def fabbrica(fixes, waf=False):
+PAGINA_TRICKY = (
+    '<html><head><link rel="https://api.w.org/" href="/wp-json/"></head>'
+    '<body class="home blog"><article><h2>Guida: cos\'è la pagina "Index of /"?</h2>'
+    "<p>Quando un server mostra Index of /cartella significa che...</p></article>"
+    '<script src="/wp-content/themes/twentytwentyfour/app.js"></script></body></html>'
+)
+
+
+def fabbrica(fixes, waf=False, tricky=False):
     class H(BaseHTTPRequestHandler):
-        if waf:
-            server_version = "BitNinja-WafPro"
+        if waf or tricky:
+            server_version = "cloudflare" if tricky else "BitNinja-WafPro"
             sys_version = ""
 
         def log_message(self, *a):
@@ -56,7 +69,23 @@ def fabbrica(fixes, waf=False):
 
         def do_GET(self):
             p = self.path
-            if p.startswith("/wp-json/wp/v2/users"):
+            if tricky:
+                if "users" in p:
+                    # il WAF blocca la richiesta: non si sa se gli utenti siano esposti
+                    return self._r(403, "<html>Attention Required! | Cloudflare</html>",
+                                   extra={"CF-RAY": "8a1b2c3d4e5f-MXP"})
+                if p.startswith("/wp-content/uploads"):
+                    # soft-404: pagina del tema che contiene la scritta "Index of"
+                    return self._r(200, PAGINA_TRICKY)
+                if p.startswith("/feed"):
+                    return self._r(200, "<?xml version=\"1.0\"?><rss><channel>"
+                                   "<generator>https://wordpress.org/?v=6.8.1</generator>"
+                                   "</channel></rss>", "application/rss+xml")
+            if p.startswith("/feed"):
+                gen = "" if "versione" in fixes else "<generator>https://wordpress.org/?v=6.8.1</generator>"
+                return self._r(200, f"<?xml version=\"1.0\"?><rss><channel>{gen}</channel></rss>",
+                               "application/rss+xml")
+            if p.startswith("/wp-json/wp/v2/users") or p.startswith("/?rest_route=/wp/v2/users"):
                 if "utenti" in fixes:
                     return self._r(401, '{"code":"rest_cannot_access"}', "application/json")
                 return self._r(200, '[{"id":1,"name":"admin","slug":"admin"}]', "application/json")
@@ -74,13 +103,23 @@ def fabbrica(fixes, waf=False):
             if p == "/":
                 gen = "" if "versione" in fixes else '<meta name="generator" content="WordPress 6.8.1" />'
                 extra = HEADER_SICUREZZA if "header" in fixes else {}
-                return self._r(200, f"<html><head>{gen}</head><body>home</body></html>", extra=extra)
+                if tricky:
+                    extra = dict(extra, **{"Content-Security-Policy":
+                                           "default-src 'self' 'unsafe-inline'; frame-ancestors 'self'",
+                                           "CF-RAY": "8a1b2c3d4e5f-MXP"})
+                return self._r(200, f'<html><head>{gen}<link rel="https://api.w.org/" href="/wp-json/">'
+                               f'</head><body class="home">home</body></html>', extra=extra)
             self._r(404, "non trovato")
 
         def do_POST(self):
             if self.path.startswith("/xmlrpc.php"):
                 n = int(self.headers.get("Content-Length", 0))
                 self.rfile.read(n)
+                if tricky:
+                    # endpoint raggiungibile ma metodi disabilitati: risponde con <fault>
+                    return self._r(200, b'<?xml version="1.0"?><methodResponse><fault><value><struct>'
+                                   b'<member><name>faultCode</name><value><int>405</int></value></member>'
+                                   b'</struct></value></fault></methodResponse>', "text/xml")
                 if "xmlrpc" in fixes:
                     return self._r(403, "Forbidden")
                 return self._r(200, METODI, "text/xml")
@@ -92,7 +131,8 @@ def fabbrica(fixes, waf=False):
 if __name__ == "__main__":
     server = []
     for porta, fixes in PROFILI.items():
-        s = ThreadingHTTPServer(("127.0.0.1", porta), fabbrica(fixes, porta in PORTE_CON_WAF))
+        s = ThreadingHTTPServer(("127.0.0.1", porta),
+                                fabbrica(fixes, porta in PORTE_CON_WAF, porta in PORTE_TRICKY))
         threading.Thread(target=s.serve_forever, daemon=True).start()
         server.append(s)
         print(f"Simulatore su http://127.0.0.1:{porta}  (correzioni: {sorted(fixes) or 'nessuna'})")
