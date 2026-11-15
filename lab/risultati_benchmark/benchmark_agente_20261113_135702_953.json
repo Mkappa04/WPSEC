@@ -1,0 +1,348 @@
+{
+  "data": "2026-11-13T13:57:02",
+  "motore": "agente (llm, qwen3.5:4b)",
+  "ripetizioni": 5,
+  "con_burp": false,
+  "conteggi": {
+    "TP": 50,
+    "TN": 40,
+    "FP": 0,
+    "FN": 0,
+    "ERR": 0,
+    "SALT-FN": 0,
+    "SALT-OK": 0
+  },
+  "accuratezza": 1.0,
+  "copertura": 1.0,
+  "precisione": 1.0,
+  "richiamo": 1.0,
+  "f1": 1.0,
+  "efficienza": {
+    "richieste_medie": 8,
+    "passi_medi": 7,
+    "chiamate_ia_medie": 3,
+    "decisioni_non_valide_totali": 45,
+    "run_con_ripiego": 15,
+    "riavvii_modello": 0,
+    "azioni_normalizzate": 0,
+    "tempo_ia_medio_s": 14.72,
+    "run_totali": 15
+  },
+  "tempi_s": {
+    "wp-vuln": [
+      15.487,
+      13.223,
+      15.85,
+      13.352,
+      15.831
+    ],
+    "wp-hard": [
+      13.482,
+      15.979,
+      13.536,
+      15.986,
+      13.643
+    ],
+    "wp-mixed": [
+      16.244,
+      14.086,
+      16.566,
+      13.982,
+      16.541
+    ]
+  },
+  "motivi_decisioni_non_valide": {
+    "risposta non valida: nessun oggetto JSON completo nella risposta": 45
+  },
+  "instabili": [],
+  "dettaglio": [
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "utenti",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "esiti_per_run": [
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE"
+      ],
+      "classe_peggiore": "TP",
+      "evidenza": "1 utenti leggibili senza login: id=1 slug='admin'"
+    },
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "author",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "esiti_per_run": [
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE"
+      ],
+      "classe_peggiore": "TP",
+      "evidenza": "La pagina archivio autore rivela lo username 'admin' (classe del body)"
+    },
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "xmlrpc",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "esiti_per_run": [
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE"
+      ],
+      "classe_peggiore": "TP",
+      "evidenza": "xmlrpc.php risponde alle chiamate XML (include system.multicall: amplifica il brute force)"
+    },
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "header",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "esiti_per_run": [
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE"
+      ],
+      "classe_peggiore": "TP",
+      "evidenza": "Header mancanti: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy | Info esposte: Server: Apache/2.4.67 (Debian), X-Powered-By: PHP/8.3.31"
+    },
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "versione",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "esiti_per_run": [
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE"
+      ],
+      "classe_peggiore": "TP",
+      "evidenza": "Il meta generator rivela WordPress 6.9.4"
+    },
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "uploads",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "esiti_per_run": [
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE"
+      ],
+      "classe_peggiore": "TP",
+      "evidenza": "La cartella uploads mostra l'elenco dei file"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "utenti",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "esiti_per_run": [
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO"
+      ],
+      "classe_peggiore": "TN",
+      "evidenza": "Nessun utente leggibile (/wp-json/wp/v2/users HTTP 404, /?rest_route=/wp/v2/users HTTP 404)"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "author",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "esiti_per_run": [
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO"
+      ],
+      "classe_peggiore": "TN",
+      "evidenza": "Nessun username nel redirect né nella pagina (HTTP 200)"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "xmlrpc",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "esiti_per_run": [
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO"
+      ],
+      "classe_peggiore": "TN",
+      "evidenza": "Nessuna risposta XML-RPC valida (HTTP 403)"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "header",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "esiti_per_run": [
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO"
+      ],
+      "classe_peggiore": "TN",
+      "evidenza": "Tutti gli header principali sono presenti"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "versione",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "esiti_per_run": [
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO"
+      ],
+      "classe_peggiore": "TN",
+      "evidenza": "Nessun meta generator con la versione"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "uploads",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "esiti_per_run": [
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO"
+      ],
+      "classe_peggiore": "TN",
+      "evidenza": "Nessun listing (HTTP 403)"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "utenti",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "esiti_per_run": [
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE"
+      ],
+      "classe_peggiore": "TP",
+      "evidenza": "1 utenti leggibili senza login: id=1 slug='admin'"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "author",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "esiti_per_run": [
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE"
+      ],
+      "classe_peggiore": "TP",
+      "evidenza": "La pagina archivio autore rivela lo username 'admin' (classe del body)"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "xmlrpc",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "esiti_per_run": [
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO"
+      ],
+      "classe_peggiore": "TN",
+      "evidenza": "Nessuna risposta XML-RPC valida (HTTP 403)"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "header",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "esiti_per_run": [
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE"
+      ],
+      "classe_peggiore": "TP",
+      "evidenza": "Header mancanti: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy | Info esposte: Server: Apache/2.4.67 (Debian), X-Powered-By: PHP/8.3.31"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "versione",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "esiti_per_run": [
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO",
+        "PROTETTO"
+      ],
+      "classe_peggiore": "TN",
+      "evidenza": "Nessun meta generator con la versione"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "uploads",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "esiti_per_run": [
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE",
+        "VULNERABILE"
+      ],
+      "classe_peggiore": "TP",
+      "evidenza": "La cartella uploads mostra l'elenco dei file"
+    }
+  ]
+}

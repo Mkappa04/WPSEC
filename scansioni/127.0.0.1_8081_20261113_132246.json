@@ -1,0 +1,301 @@
+{
+  "scanner": "3.0",
+  "data": "2026-11-13T13:22:46",
+  "bersaglio": "http://127.0.0.1:8081",
+  "etichetta": "",
+  "modello": "qwen3.5:4b",
+  "modo_rete": "Diretta + ZAP (http://127.0.0.1:8090)",
+  "user_agent": "TirocinioPentest/3.0 (scanner didattico non invasivo)",
+  "risultati": [
+    {
+      "id": "header",
+      "titolo": "Header di sicurezza HTTP",
+      "percorso": "/",
+      "esito": "VULNERABILE",
+      "gravita": "Bassa",
+      "evidenza": "Header mancanti: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy | Info esposte: Server: Apache/2.4.67 (Debian), X-Powered-By: PHP/8.3.31",
+      "tempo": 0.07,
+      "ia": {
+        "spiegazione": "Mancanza di header critici espone il sito a attacchi XSS, clickjacking e sniffing. Sebbene lo scanner lo classifichi come basso, l'impatto reale è alto perché compromette la sicurezza del traffico.",
+        "priorita": "alta",
+        "tentativi": 1
+      },
+      "soluzione": null,
+      "cwe": null
+    },
+    {
+      "id": "versione",
+      "titolo": "Versione WordPress esposta",
+      "percorso": "/",
+      "esito": "VULNERABILE",
+      "gravita": "Bassa",
+      "evidenza": "Il meta generator rivela WordPress 6.9.4",
+      "tempo": 0.05,
+      "ia": {
+        "spiegazione": "Esposizione della versione WordPress permette agli attaccanti di sfruttare vulnerabilità note specifiche per quella versione. Rischio medio-basso se la versione è recente.",
+        "priorita": "media",
+        "tentativi": 1
+      },
+      "soluzione": null,
+      "cwe": null
+    },
+    {
+      "id": "zap-sintesi",
+      "titolo": "ZAP: sintesi (passiva)",
+      "percorso": "/",
+      "esito": "INFO",
+      "gravita": "-",
+      "evidenza": "46 URL esplorati; avvisi: 1 alti, 38 medi, 99 bassi, 27 informativi",
+      "tempo": 0.0,
+      "ia": null,
+      "soluzione": null,
+      "cwe": null
+    },
+    {
+      "id": "zap-20020",
+      "titolo": "ZAP: PHP Version with Known Vulnerabilities",
+      "percorso": "/xmlrpc.php",
+      "esito": "VULNERABILE",
+      "gravita": "Alta",
+      "evidenza": "1 occorrenze (confidenza Medium). Esempio: http://127.0.0.1:8081/xmlrpc.php?rsd | evidenza: PHP/8.3.31",
+      "tempo": 0.0,
+      "ia": {
+        "spiegazione": "PHP 8.3.31 ha vulnerabilità note che permettono esecuzioni remote o accessi non autorizzati tramite xmlrpc.php, con alto rischio di compromissione.",
+        "priorita": "alta",
+        "tentativi": 1
+      },
+      "soluzione": "Upgrade PHP to a supported version which includes fixes for the listed vulnerabilities. Also configure the server not to disclose the PHP version, e.g. by setting \"expose_php = Off\" in php.ini and suppressing version details in the \"Server\" header.",
+      "cwe": "CWE-1395"
+    },
+    {
+      "id": "zap-10038",
+      "titolo": "ZAP: Content Security Policy (CSP) Header Not Set",
+      "percorso": "/robots.txt (+10 URL)",
+      "esito": "VULNERABILE",
+      "gravita": "Media",
+      "evidenza": "11 occorrenze (confidenza High). Esempio: http://127.0.0.1:8081/robots.txt",
+      "tempo": 0.0,
+      "ia": {
+        "spiegazione": "Il sito non blocca script esterni malevoli. Rischio medio se il CMS o plugin sono compromessi: un attaccante potrebbe eseguire codice arbitrario.",
+        "priorita": "media",
+        "tentativi": 1
+      },
+      "soluzione": "Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "cwe": "CWE-693"
+    },
+    {
+      "id": "zap-10020",
+      "titolo": "ZAP: Missing Anti-clickjacking Header",
+      "percorso": "/ (+8 URL)",
+      "esito": "VULNERABILE",
+      "gravita": "Media",
+      "evidenza": "9 occorrenze (confidenza Medium). Esempio: http://127.0.0.1:8081/ parametro 'x-frame-options'",
+      "tempo": 0.0,
+      "ia": {
+        "spiegazione": "Il sito permette l'incorporamento da altri siti (clickjacking), permettendo a utenti malintenzionati di manipolare interfacce senza che lo capiscano.",
+        "priorita": "media",
+        "tentativi": 1
+      },
+      "soluzione": "Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only by pages on your server (e.g. it's part of a FRAMESET) then you'll want to use SAMEORIGIN, otherwise if you never expect the page to be framed, you should use DENY. Alternatively consider implementing Content Security Policy's \"frame-ancestors\" directive.",
+      "cwe": "CWE-1021"
+    },
+    {
+      "id": "zap-10202",
+      "titolo": "ZAP: Absence of Anti-CSRF Tokens",
+      "percorso": "/wp-login.php (+5 URL)",
+      "esito": "VULNERABILE",
+      "gravita": "Media",
+      "evidenza": "6 occorrenze (confidenza Low). Esempio: http://127.0.0.1:8081/wp-login.php?reauth=1&redirect_to=http%3A%2F%2F127.0.0.1%3A8081%2Fwp-admin%2F | evidenza: <form name=\"loginform\" id=\"loginform\" action=\"http://127.0.0.1:8081/wp-login.php",
+      "tempo": 0.0,
+      "ia": {
+        "spiegazione": "Mancanza di token CSRF permette a attaccanti di eseguire azioni amministrative senza autenticazione. Rischio medio: compromissione dati o modifiche non autorizzate.",
+        "priorita": "media",
+        "tentativi": 1
+      },
+      "soluzione": "Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF packages such as the OWASP CSRFGuard.\n\nPhase: Implementation\nEnsure that your application is free of cross-site scripting issues, because most CSRF defenses can be bypassed using attacker-controlled script.\n\nPhase: Architecture and Design\nGenerate a unique nonce for each form, place the nonce into the form, and verify the nonce upon receipt of the form. Be sure that the nonce is not predictable (CWE-330).\nNote that this can be bypassed using XSS.\n\nIdentify especially dangerous operations. When the user performs a dangerous operation, send a separate confirmation request to ensure that the user intended to perform that operation.\nNote that this can be bypassed using XSS.\n\nUse the ESAPI Session Management control.\nThis control includes a component for CSRF.\n\nDo not use the GET method for any request that triggers a state change.\n\nPhase: Implementation\nCheck the HTTP Referer header to see if the request originated from an expected page. This could break legitimate functionality, because users or proxies may have disabled sending the Referer for privacy reasons.",
+      "cwe": "CWE-352"
+    },
+    {
+      "id": "zap-10055",
+      "titolo": "ZAP: CSP: style-src unsafe-inline",
+      "percorso": "/wp-login.php (+2 URL)",
+      "esito": "VULNERABILE",
+      "gravita": "Media",
+      "evidenza": "3 occorrenze (confidenza High). Esempio: http://127.0.0.1:8081/wp-login.php?reauth=1&redirect_to=http%3A%2F%2F127.0.0.1%3A8081%2Fwp-admin%2F parametro 'Content-Security-Policy' | evidenza: frame-ancestors 'self';",
+      "tempo": 0.0,
+      "ia": {
+        "spiegazione": "Il sito permette lo stile esterno non sicuro, rischiando iniezioni CSS che alterano l'interfaccia o bloccano funzionalità critiche.",
+        "priorita": "media",
+        "tentativi": 1
+      },
+      "soluzione": "Ensure that your web server, application server, load balancer, etc. is properly configured to set the Content-Security-Policy header.",
+      "cwe": "CWE-693"
+    },
+    {
+      "id": "zap-10036",
+      "titolo": "ZAP: Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "percorso": "/robots.txt (+37 URL)",
+      "esito": "VULNERABILE",
+      "gravita": "Bassa",
+      "evidenza": "38 occorrenze (confidenza High). Esempio: http://127.0.0.1:8081/robots.txt | evidenza: Apache/2.4.67 (Debian)",
+      "tempo": 0.0,
+      "ia": {
+        "spiegazione": "Il server rivela la versione esatta di Apache, utile agli attaccanti per testare vulnerabilità note. Rischio medio: se sfruttata, permette accesso non autorizzato.",
+        "priorita": "media",
+        "tentativi": 1
+      },
+      "soluzione": "Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details.",
+      "cwe": "CWE-497"
+    },
+    {
+      "id": "zap-10021",
+      "titolo": "ZAP: X-Content-Type-Options Header Missing",
+      "percorso": "/wp-includes/js/dist/script-modules/block-library/navigation/view.min.js (+30 URL)",
+      "esito": "VULNERABILE",
+      "gravita": "Bassa",
+      "evidenza": "31 occorrenze (confidenza Medium). Esempio: http://127.0.0.1:8081/wp-includes/js/dist/script-modules/block-library/navigation/view.min.js?ver=b0f909c3ec791c383210 parametro 'x-content-type-options'",
+      "tempo": 0.0,
+      "ia": {
+        "spiegazione": "Mancanza del header che impedisce l'iniezione di contenuti via AJAX. Rischio basso se il sito non usa API complesse, ma va corretto per sicurezza.",
+        "priorita": "media",
+        "tentativi": 1
+      },
+      "soluzione": "Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end user uses a standards-compliant and modern web browser that does not perform MIME-sniffing at all, or that can be directed by the web application/web server to not perform MIME-sniffing.",
+      "cwe": "CWE-693"
+    },
+    {
+      "id": "zap-10037",
+      "titolo": "ZAP: Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "percorso": "/xmlrpc.php (+24 URL)",
+      "esito": "VULNERABILE",
+      "gravita": "Bassa",
+      "evidenza": "25 occorrenze (confidenza Medium). Esempio: http://127.0.0.1:8081/xmlrpc.php | evidenza: X-Powered-By: PHP/8.3.31",
+      "tempo": 0.0,
+      "ia": {
+        "spiegazione": "Il server rivela la versione PHP agli attaccanti, facilitando exploit mirati. Rischio medio: possibile sfruttamento se vulnerabilità nota esiste.",
+        "priorita": "media",
+        "tentativi": 1
+      },
+      "soluzione": "Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers.",
+      "cwe": "CWE-497"
+    },
+    {
+      "id": "zap-10054",
+      "titolo": "ZAP: Cookie without SameSite Attribute",
+      "percorso": "/wp-login.php (+2 URL)",
+      "esito": "VULNERABILE",
+      "gravita": "Bassa",
+      "evidenza": "3 occorrenze (confidenza Medium). Esempio: http://127.0.0.1:8081/wp-login.php?reauth=1&redirect_to=http%3A%2F%2F127.0.0.1%3A8081%2Fwp-admin%2F parametro 'wordpress_test_cookie' | evidenza: Set-Cookie: wordpress_test_cookie",
+      "tempo": 0.0,
+      "ia": null,
+      "soluzione": "Ensure that the SameSite attribute is set to either 'lax' or ideally 'strict' for all cookies.",
+      "cwe": "CWE-1275"
+    },
+    {
+      "id": "zap-10009",
+      "titolo": "ZAP: In Page Banner Information Leak",
+      "percorso": "/robots.txt (+1 URL)",
+      "esito": "VULNERABILE",
+      "gravita": "Bassa",
+      "evidenza": "2 occorrenze (confidenza High). Esempio: http://127.0.0.1:8081/robots.txt | evidenza: Apache/2.4.67",
+      "tempo": 0.0,
+      "ia": {
+        "spiegazione": "Il file robots.txt rivela dettagli tecnici (server Apache) utili agli attaccanti per mappare il sito. Rischio basso ma priorità alta perché facilita la scoperta di vulnerabilità.",
+        "priorita": "alta",
+        "tentativi": 1
+      },
+      "soluzione": "Configure the server to prevent such information leaks. For example:\nUnder Tomcat this is done via the \"server\" directive and implementation of custom error pages.\nUnder Apache this is done via the \"ServerSignature\" and \"ServerTokens\" directives.",
+      "cwe": "CWE-497"
+    },
+    {
+      "id": "zap-info",
+      "titolo": "ZAP: avvisi informativi",
+      "percorso": "-",
+      "esito": "INFO",
+      "gravita": "-",
+      "evidenza": "5 tipi: Charset Mismatch, Information Disclosure - Suspicious Comments, Modern Web Application, Session Management Response Identified, User Controllable HTML Element Attribute (Potential XSS)",
+      "tempo": 0.0,
+      "ia": null,
+      "soluzione": null,
+      "cwe": null
+    }
+  ],
+  "agente": {
+    "stat": {
+      "passi": 3,
+      "chiamate_llm": 4,
+      "decisioni_invalide": 0,
+      "ripiego": false,
+      "forzati": 0,
+      "tempo_llm_s": 12.03,
+      "terminato_da": "decisione dell'agente",
+      "politica": "llm",
+      "richieste_scanner": 2,
+      "secondi_totali": 18.33,
+      "zap": {
+        "opzioni_rifiutate": [],
+        "url_esplorati": 46,
+        "spider_completo": true,
+        "pscan_completo": true
+      }
+    },
+    "traccia": [
+      {
+        "passo": 1,
+        "politica": "llm",
+        "azione": "header",
+        "motivo": "Verificare gli header di sicurezza HTTP per valutare la configurazione iniziale.",
+        "valida": true,
+        "errore": null,
+        "esito": "VULNERABILE",
+        "secondi": 0.48,
+        "richieste": 1
+      },
+      {
+        "passo": 2,
+        "politica": "llm",
+        "azione": "versione",
+        "motivo": "Identificare la versione di WordPress per valutare le vulnerabilità note.",
+        "valida": true,
+        "errore": null,
+        "esito": "VULNERABILE",
+        "secondi": 0.45,
+        "richieste": 1
+      },
+      {
+        "passo": 3,
+        "politica": "llm",
+        "azione": "zap_passivo",
+        "motivo": "Scansione passiva per mappare vulnerabilità e endpoint senza rischi.",
+        "valida": true,
+        "errore": null,
+        "esito": "INFO",
+        "secondi": 5.37,
+        "richieste": 0
+      },
+      {
+        "passo": 4,
+        "politica": "llm",
+        "azione": "fine",
+        "motivo": "Informazioni sufficienti per analisi; sito vulnerabile e WAF non rilevato.",
+        "valida": true,
+        "errore": null
+      }
+    ],
+    "policy_attivo": {
+      "permesso": true,
+      "motivo": "bersaglio locale/di laboratorio"
+    },
+    "strumenti": [
+      "waf",
+      "utenti",
+      "author",
+      "xmlrpc",
+      "header",
+      "versione",
+      "uploads",
+      "zap_passivo",
+      "zap_attivo"
+    ]
+  }
+}

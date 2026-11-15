@@ -1,0 +1,41 @@
+{
+  "descrizione": "Esito atteso di ogni controllo su ciascun bersaglio del laboratorio. Va verificato a mano (lab.sh verifica) prima di fidarsi dei risultati.",
+  "bersagli": [
+    {
+      "nome": "wp-vuln",
+      "url": "http://127.0.0.1:8081",
+      "atteso": {
+        "utenti": "VULNERABILE",
+        "author": "VULNERABILE",
+        "xmlrpc": "VULNERABILE",
+        "header": "VULNERABILE",
+        "versione": "VULNERABILE",
+        "uploads": "VULNERABILE"
+      }
+    },
+    {
+      "nome": "wp-hard",
+      "url": "http://127.0.0.1:8082",
+      "atteso": {
+        "utenti": "PROTETTO",
+        "author": "PROTETTO",
+        "xmlrpc": "PROTETTO",
+        "header": "PROTETTO",
+        "versione": "PROTETTO",
+        "uploads": "PROTETTO"
+      }
+    },
+    {
+      "nome": "wp-mixed",
+      "url": "http://127.0.0.1:8083",
+      "atteso": {
+        "utenti": "VULNERABILE",
+        "author": "VULNERABILE",
+        "xmlrpc": "PROTETTO",
+        "header": "VULNERABILE",
+        "versione": "PROTETTO",
+        "uploads": "VULNERABILE"
+      }
+    }
+  ]
+}

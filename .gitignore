@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*:Zone.Identifier
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+data/
+output/
+*.egg-info/

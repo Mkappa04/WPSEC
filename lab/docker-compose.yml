@@ -1,0 +1,86 @@
+# Laboratorio di test: 3 WordPress con configurazioni di sicurezza diverse.
+# ATTENZIONE: sono volutamente deboli. Le porte sono legate a 127.0.0.1,
+# quindi NON sono raggiungibili dalla rete. Non esporle mai su Internet.
+#
+#   wp-vuln  -> http://127.0.0.1:8081  nessuna correzione
+#   wp-hard  -> http://127.0.0.1:8082  tutte le correzioni
+#   wp-mixed -> http://127.0.0.1:8083  solo XML-RPC e versione corretti
+
+x-wp: &wp
+  image: wordpress:6-apache
+  restart: unless-stopped
+  environment: &wpenv
+    WORDPRESS_DB_USER: lab
+    WORDPRESS_DB_PASSWORD: lab-only-password
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: lab-only-root
+      MARIADB_USER: lab
+      MARIADB_PASSWORD: lab-only-password
+      MARIADB_DATABASE: wp_vuln
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  wp-vuln:
+    <<: *wp
+    ports: ["127.0.0.1:8081:80"]
+    environment:
+      <<: *wpenv
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: wp_vuln
+      LAB_FIXES: ""
+    volumes:
+      - ./mu-plugins:/var/www/html/wp-content/mu-plugins:ro
+      - ./htaccess/indexes-on.htaccess:/var/www/html/wp-content/uploads/.htaccess:ro
+
+  wp-hard:
+    <<: *wp
+    ports: ["127.0.0.1:8082:80"]
+    environment:
+      <<: *wpenv
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: wp_hard
+      LAB_FIXES: "utenti,author,xmlrpc,header,versione"
+    volumes:
+      - ./mu-plugins:/var/www/html/wp-content/mu-plugins:ro
+      - ./htaccess/indexes-off.htaccess:/var/www/html/wp-content/uploads/.htaccess:ro
+
+  wp-mixed:
+    <<: *wp
+    ports: ["127.0.0.1:8083:80"]
+    environment:
+      <<: *wpenv
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: wp_mixed
+      LAB_FIXES: "xmlrpc,versione"
+    volumes:
+      - ./mu-plugins:/var/www/html/wp-content/mu-plugins:ro
+      - ./htaccess/indexes-on.htaccess:/var/www/html/wp-content/uploads/.htaccess:ro
+
+  # OWASP ZAP in modalità daemon. Non parte con "su": si avvia con  ./lab.sh zap
+  # Usa la rete dell'host, così vede i siti del laboratorio agli stessi indirizzi
+  # dello scanner (127.0.0.1:808x) e la sua API resta raggiungibile solo dal PC.
+  zap:
+    image: zaproxy/zap-stable
+    profiles: ["zap"]
+    network_mode: host
+    user: zap
+    command: >
+      zap.sh -daemon -host 127.0.0.1 -port 8090
+      -config api.key=${ZAP_API_KEY:-chiave-lab-zap}
+
+volumes:
+  db_data:

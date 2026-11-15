@@ -1,0 +1,198 @@
+{
+  "data": "2026-11-13T13:25:03",
+  "motore": "agente (llm, qwen3.5:4b)",
+  "ripetizioni": 5,
+  "con_burp": false,
+  "conteggi": {
+    "TP": 6,
+    "TN": 8,
+    "FP": 0,
+    "FN": 4,
+    "ERR": 0,
+    "SALT-FN": 0,
+    "SALT-OK": 0
+  },
+  "accuratezza": 0.778,
+  "precisione": 1.0,
+  "richiamo": 0.6,
+  "f1": 0.75,
+  "efficienza": {
+    "richieste_medie": 7,
+    "passi_medi": 7,
+    "chiamate_ia_medie": 3.2,
+    "decisioni_non_valide_totali": 45,
+    "run_con_ripiego": 15,
+    "tempo_ia_medio_s": 0.5,
+    "run_totali": 15
+  },
+  "tempi_s": {
+    "wp-vuln": [
+      2.927,
+      0.637,
+      0.51,
+      0.478,
+      0.452
+    ],
+    "wp-hard": [
+      0.712,
+      0.507,
+      0.497,
+      0.497,
+      0.502
+    ],
+    "wp-mixed": [
+      0.719,
+      0.535,
+      0.545,
+      0.485,
+      0.519
+    ]
+  },
+  "instabili": [],
+  "dettaglio": [
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "utenti",
+      "atteso": "VULNERABILE",
+      "trovato": "PROTETTO",
+      "classe": "FN",
+      "evidenza": "Nessun utente leggibile (HTTP 404)"
+    },
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "author",
+      "atteso": "VULNERABILE",
+      "trovato": "PROTETTO",
+      "classe": "FN",
+      "evidenza": "Nessun username nel redirect (HTTP 200)"
+    },
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "xmlrpc",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "evidenza": "xmlrpc.php risponde alle chiamate XML (include system.multicall: amplifica il brute force)"
+    },
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "header",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "evidenza": "Header mancanti: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy | Info esposte: Server: Apache/2.4.67 (Debian), X-Powered-By: PHP/8.3.31"
+    },
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "versione",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "evidenza": "Il meta generator rivela WordPress 6.9.4"
+    },
+    {
+      "bersaglio": "wp-vuln",
+      "controllo": "uploads",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "evidenza": "La cartella uploads mostra l'elenco dei file"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "utenti",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "evidenza": "Nessun utente leggibile (HTTP 404)"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "author",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "evidenza": "Nessun username nel redirect (HTTP 200)"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "xmlrpc",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "evidenza": "Nessuna risposta XML-RPC valida (HTTP 403)"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "header",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "evidenza": "Tutti gli header principali sono presenti"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "versione",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "evidenza": "Nessun meta generator con la versione"
+    },
+    {
+      "bersaglio": "wp-hard",
+      "controllo": "uploads",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "evidenza": "Nessun listing (HTTP 403)"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "utenti",
+      "atteso": "VULNERABILE",
+      "trovato": "PROTETTO",
+      "classe": "FN",
+      "evidenza": "Nessun utente leggibile (HTTP 404)"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "author",
+      "atteso": "VULNERABILE",
+      "trovato": "PROTETTO",
+      "classe": "FN",
+      "evidenza": "Nessun username nel redirect (HTTP 200)"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "xmlrpc",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "evidenza": "Nessuna risposta XML-RPC valida (HTTP 403)"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "header",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "evidenza": "Header mancanti: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy | Info esposte: Server: Apache/2.4.67 (Debian), X-Powered-By: PHP/8.3.31"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "versione",
+      "atteso": "PROTETTO",
+      "trovato": "PROTETTO",
+      "classe": "TN",
+      "evidenza": "Nessun meta generator con la versione"
+    },
+    {
+      "bersaglio": "wp-mixed",
+      "controllo": "uploads",
+      "atteso": "VULNERABILE",
+      "trovato": "VULNERABILE",
+      "classe": "TP",
+      "evidenza": "La cartella uploads mostra l'elenco dei file"
+    }
+  ]
+}
