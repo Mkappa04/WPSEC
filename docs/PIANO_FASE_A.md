@@ -78,11 +78,14 @@ Le transizioni ammesse sono in `wpsec/core/models.py` e applicate da `wpsec/core
 | `wpsec/database/legacy.py` | Scritto e testato: importazione delle scansioni v3; solo loopback o host dichiarati autorizzati, `aternos.org` sempre rifiutato, username mascherati |
 | `wpsec/comparison/compare.py` | Scritto e testato: "risolto" solo se confermato prima e assenza verificata dopo; inconcludente/errore/non applicabile = NON CONFRONTABILE (corregge la v3); confronto v3↔v4 per `legacy_id` con header aggregati |
 | `wpsec/reports/` | Scritto e testato: JSON, Markdown, HTML autonomo (escape + CSP senza script), PDF (fpdf2, DejaVu o ripiego Latin-1); IA sempre marcata; anonimizzazione per la tesi |
-| API FastAPI, dashboard, CLI `main.py` | **Da scrivere** |
+| `wpsec/core/authorization.py` | Scritto e testato: creazione validata (laboratorio solo loopback; sito reale con documento obbligatorio, niente scansione attiva, massimo 90 giorni) |
+| `wpsec/web/app.py`, `scan_manager.py`, `static/` | Scritti e testati: API FastAPI + dashboard (JS locale, solo `textContent`), scansioni in background con limite di concorrenza e annullamento; protezioni: Host locali (DNS rebinding), Origin e corpo JSON (CSRF), CSP senza inline, report serviti in sandbox |
+| `main.py` | Scritto e testato: CLI `auth`, `scan` (anche `--lab URL`), `list`, `report`, `compare`, `import-v3`, `models`, `serve` (solo locale salvo `--allow-remote`) |
 | Documentazione in `docs/` (METHODOLOGY.md, DEVELOPMENT_LOG.md citati nel codice) | **Da scrivere** |
 
-Verifiche eseguite finora: 208 test passano (6 di caratterizzazione v3 + 202 dei moduli v4),
-copertura di `wpsec` circa 91%. Sul sito simulato `wp-tricky` la pipeline v4 corregge i tre
+Verifiche eseguite finora: 237 test passano (6 di caratterizzazione v3 + 231 dei moduli v4),
+copertura circa 92%. Prova manuale sul laboratorio Docker (WordPress reale, porte 8081-8083):
+vedi la sezione 8. Sul sito simulato `wp-tricky` la pipeline v4 corregge i tre
 errori noti della v3: utenti dietro il 403 del WAF -> inconcludente (non "protetto"),
 versione esposta nel feed -> confermata, "Index of" in un articolo -> falso positivo.
 
@@ -91,7 +94,7 @@ versione esposta nel feed -> confermata, "Index of" in un articolo -> falso posi
 1. ~~Test dei moduli già scritti (client HTTP, analisi delle risposte, contesto).~~ **Fatto.**
 2. ~~Agenti mancanti e orchestratore.~~ **Fatto** (manca solo l'agente ZAP).
 3. ~~Database, report, confronto.~~ **Fatto.**
-4. API e dashboard.
+4. ~~API e dashboard.~~ **Fatto** (dashboard non ancora provata in un browser).
 5. Benchmark sul laboratorio e documentazione.
 
 ## 7. Pianificazione delle 375 ore
@@ -109,3 +112,16 @@ versione esposta nel feed -> confermata, "Index of" in un articolo -> falso posi
 
 Il dettaglio delle attività per fase è nella conversazione della Fase A; le ore reali vanno
 registrate in `docs/DEVELOPMENT_LOG.md`.
+
+## 8. Differenze fra v4 e `lab/ground_truth.json` sul laboratorio reale (17/11/2026)
+
+La ground truth è scritta con la semantica della v3. Sul WordPress reale la v4 dà:
+
+| Bersaglio | Controllo | Ground truth (v3) | v4 | Motivo |
+|---|---|---|---|---|
+| wp-hard, wp-mixed | versione | PROTETTO | confermato (confidenza media) | la versione 6.9.4 resta nel `?ver=` degli script di `wp-includes`; il generator è stato rimosso, ma l'esposizione c'è |
+| wp-hard | header | PROTETTO | CSP confermato come *debole* | il CSP contiene `'unsafe-inline'`; la v3 controllava solo la presenza dell'header |
+| tutti | header informativi | (non previsto) | confermato | `Server: Apache/2.4.67 (Debian)`, `X-Powered-By: PHP/8.3.31` |
+
+Da decidere prima del benchmark (punto 5): aggiornare la ground truth alla semantica v4
+(consigliato, motivando ogni cambio) oppure confrontare con la v3 solo sui controlli comuni.

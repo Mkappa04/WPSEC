@@ -64,7 +64,8 @@ def preflight(target_url: str, auth: Authorization, options: ScanOptions) -> Ori
 def run_scan(target_url: str, authorization: Authorization, options: ScanOptions | None = None,
              settings: Settings | None = None, *, ai=AUTO, resolver=None,
              cancel_event: threading.Event | None = None, agents=None,
-             on_update: Callable[[ScanContext], None] | None = None) -> ScanResult:
+             on_update: Callable[[ScanContext], None] | None = None,
+             scan_id: str | None = None) -> ScanResult:
     """Esegue una scansione completa e ritorna il risultato (anche se fallita o annullata).
 
     ai: AUTO = cerca Ollama se options.use_ai; None = nessuna IA; oppure un AIProvider.
@@ -87,6 +88,8 @@ def run_scan(target_url: str, authorization: Authorization, options: ScanOptions
                         target=origin.url, host=origin.host, authorization=authorization,
                         options=options, network_mode=client.network_mode,
                         user_agent=settings.effective_user_agent)
+    if scan_id:
+        result.id = scan_id
     ai_note = ""
     if ai == AUTO:
         ai = None

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>wpsec — Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">wpsec <span class="muted" id="version"></span></div>
+    <nav>
+      <a href="#/scans" data-route="scans">Scansioni</a>
+      <a href="#/new" data-route="new">Nuova scansione</a>
+      <a href="#/auth" data-route="auth">Autorizzazioni</a>
+      <a href="#/compare" data-route="compare">Confronto</a>
+    </nav>
+  </header>
+  <main id="view" aria-live="polite"></main>
+  <footer class="muted">
+    Analisi non invasiva di siti autorizzati. Il codice decide richieste e conferme; l'IA locale spiega soltanto.
+  </footer>
+</body>
+</html>
