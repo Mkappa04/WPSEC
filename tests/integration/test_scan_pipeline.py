@@ -220,3 +220,23 @@ def test_pianificatore_ia_con_azione_inventata(mock_sites, fake_ollama):
     r = _scan(mock_sites["wp-vuln"], ScanOptions(use_ai=True, planner="llm"), ai=ai)
     assert r.stats["planner"]["fallback"] is True
     assert {k: v for k, v in _status(r).items() if k in WP_CHECKS} == EXPECTED["wp-vuln"]
+
+
+# ------------------------------------------------------------ archivio, report, confronto
+
+def test_scansione_archiviata_riportata_e_confrontata(mock_sites, tmp_path):
+    from wpsec.comparison.compare import Outcome, compare
+    from wpsec.database.store import Store
+    from wpsec.reports import render
+    store = Store(tmp_path / "wpsec.sqlite3")
+    tricky, vuln = _scan(mock_sites["wp-tricky"]), _scan(mock_sites["wp-vuln"])
+    for r in (tricky, vuln):
+        store.save_scan(r)
+    md = render(store.get_scan(tricky.id), "md").decode()
+    assert "Da verificare manualmente" in md and "falsi positivi" in md
+    assert render(vuln, "pdf").startswith(b"%PDF")
+    # stesso sito scansionato due volte: nulla di risolto, nulla di nuovo
+    again = _scan(mock_sites["wp-vuln"])
+    c = compare(vuln, again)
+    assert c.counts()["resolved"] == 0 and c.counts()["new"] == 0
+    assert any(r.outcome == Outcome.STILL_OPEN for r in c.rows)

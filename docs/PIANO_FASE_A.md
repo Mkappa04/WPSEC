@@ -74,11 +74,15 @@ Le transizioni ammesse sono in `wpsec/core/models.py` e applicate da `wpsec/core
 | `wpsec/core/scan.py` | Scritto e testato: `run_scan()` con controlli preliminari (`ScanRefused`) prima di qualunque richiesta |
 | `tests/helpers.py` | Funzioni di supporto per i test |
 | Agente ZAP (analisi passiva) | **Da scrivere** (`run_scan` per ora rifiuta `use_zap`) |
-| Database SQLite, report, confronto, API FastAPI, dashboard, CLI `main.py` | **Da scrivere** |
+| `wpsec/database/store.py` | Scritto e testato: SQLite (libreria standard), risultato completo come JSON validato + indice per elenchi e storico, autorizzazioni revocabili (mai cancellate), schema versionato, scansioni interrotte marcate fallite |
+| `wpsec/database/legacy.py` | Scritto e testato: importazione delle scansioni v3; solo loopback o host dichiarati autorizzati, `aternos.org` sempre rifiutato, username mascherati |
+| `wpsec/comparison/compare.py` | Scritto e testato: "risolto" solo se confermato prima e assenza verificata dopo; inconcludente/errore/non applicabile = NON CONFRONTABILE (corregge la v3); confronto v3↔v4 per `legacy_id` con header aggregati |
+| `wpsec/reports/` | Scritto e testato: JSON, Markdown, HTML autonomo (escape + CSP senza script), PDF (fpdf2, DejaVu o ripiego Latin-1); IA sempre marcata; anonimizzazione per la tesi |
+| API FastAPI, dashboard, CLI `main.py` | **Da scrivere** |
 | Documentazione in `docs/` (METHODOLOGY.md, DEVELOPMENT_LOG.md citati nel codice) | **Da scrivere** |
 
-Verifiche eseguite finora: 165 test passano (6 di caratterizzazione v3 + 159 dei moduli v4),
-copertura di `wpsec` circa 90%. Sul sito simulato `wp-tricky` la pipeline v4 corregge i tre
+Verifiche eseguite finora: 208 test passano (6 di caratterizzazione v3 + 202 dei moduli v4),
+copertura di `wpsec` circa 91%. Sul sito simulato `wp-tricky` la pipeline v4 corregge i tre
 errori noti della v3: utenti dietro il 403 del WAF -> inconcludente (non "protetto"),
 versione esposta nel feed -> confermata, "Index of" in un articolo -> falso positivo.
 
@@ -86,7 +90,7 @@ versione esposta nel feed -> confermata, "Index of" in un articolo -> falso posi
 
 1. ~~Test dei moduli già scritti (client HTTP, analisi delle risposte, contesto).~~ **Fatto.**
 2. ~~Agenti mancanti e orchestratore.~~ **Fatto** (manca solo l'agente ZAP).
-3. Database, report, confronto.
+3. ~~Database, report, confronto.~~ **Fatto.**
 4. API e dashboard.
 5. Benchmark sul laboratorio e documentazione.
 
