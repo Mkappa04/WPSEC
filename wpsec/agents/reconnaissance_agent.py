@@ -19,6 +19,7 @@ class ReconnaissanceAgent(BaseAgent):
     name = "recon"
     display_name = "Reconnaissance Agent"
     description = "Tecnologie, WordPress, WAF/CDN, TLS e percorsi pubblici (non invasivo)"
+    phase = "recon"
 
     def run(self, ctx: ScanContext) -> str:
         c = ctx.client

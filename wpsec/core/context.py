@@ -121,7 +121,10 @@ class ScanContext:
             return f
 
     def transition(self, finding: Finding, to: FindingStatus, agent: str, reason: str,
-                   evidence_ids: list[str] = (), confidence: Confidence | None = None):
+                   evidence_ids: list[str] = (), confidence: Confidence | None = None,
+                   summary: str | None = None, details: dict | None = None):
+        """Cambio di stato. summary/details aggiornano l'esito quando la transizione si basa
+        su un ricontrollo (nuova evidenza); i dettagli vengono aggiunti, mai rimossi."""
         with self.lock:
             self._check_writer(agent)
             frm = finding.status
@@ -143,11 +146,47 @@ class ScanContext:
             finding.status = to
             if confidence is not None:
                 finding.confidence = confidence
+            if summary:
+                finding.summary = summary
+            if details:
+                finding.details.update(details)
             finding.evidence_ids += [e for e in new_ids if e not in finding.evidence_ids]
             finding.history.append(StatusChange(from_status=frm, to_status=to, agent=agent,
                                                 reason=reason[:300], evidence_ids=new_ids))
             self.log(agent, "transition", f"{finding.check_id}: {frm.value} -> {to.value}",
                      reason=reason[:200])
+
+    # ------------------------------------------------------------ valutazione e IA
+    ASSESSMENT_FIELDS = {"severity", "priority", "impact", "likelihood", "rationale", "cwe",
+                         "cvss_vector", "remediation"}
+
+    def set_assessment(self, finding: Finding, agent: str, **fields):
+        """Valutazione del rischio e correzione: solo su risultati CONFERMATI."""
+        bad = set(fields) - self.ASSESSMENT_FIELDS
+        if bad:
+            raise ValueError(f"campi non ammessi: {sorted(bad)}")
+        with self.lock:
+            self._check_writer(agent)
+            if finding.status != FindingStatus.CONFIRMED:
+                raise TransitionError(f"{finding.check_id}: valutazione ammessa solo se confermato")
+            for k, v in fields.items():
+                setattr(finding, k, v)
+            self.log(agent, "assessment", f"{finding.check_id}: {sorted(fields)}")
+
+    def add_ai_note(self, finding: Finding, note, agent: str):
+        """Le note dell'IA si aggiungono accanto ai dati deterministici, senza modificarli."""
+        with self.lock:
+            self._check_writer(agent)
+            finding.ai_notes.append(note)
+            self.log(agent, "ai_note", f"{finding.check_id}: {note.purpose}", model=note.model)
+
+    def set_summary(self, agent: str, text: str, ai: bool, limitations: list[str]):
+        with self.lock:
+            self._check_writer(agent)
+            self.result.executive_summary = text
+            self.result.executive_summary_ai = ai
+            self.result.stats["limitations"] = list(limitations)
+            self.log(agent, "summary", "sintesi IA" if ai else "sintesi deterministica")
 
     # ------------------------------------------------------------ istantanea
     def snapshot(self) -> ScanResult:

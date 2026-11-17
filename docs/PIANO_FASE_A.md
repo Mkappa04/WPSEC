@@ -60,28 +60,32 @@ Le transizioni ammesse sono in `wpsec/core/models.py` e applicate da `wpsec/core
 
 | Modulo | Stato |
 |---|---|
-| `wpsec/config/settings.py` | Scritto, non testato |
-| `wpsec/core/models.py` | Scritto, non testato |
-| `wpsec/core/context.py` | Scritto, non testato |
-| `wpsec/scanner/probes.py`, `http_client.py` | Scritti, non testati |
-| `wpsec/scanner/wordpress_checks.py`, `security_headers.py`, `tls_checks.py`, `fingerprint.py` | Scritti, non testati |
+| `wpsec/config/settings.py` | Scritto, usato dai test |
+| `wpsec/core/models.py` | Scritto e testato (`tests/unit/test_models.py`) |
+| `wpsec/core/context.py` | Scritto e testato (`tests/unit/test_context.py`) |
+| `wpsec/scanner/probes.py`, `http_client.py` | Scritti e testati (`tests/integration/test_http_client.py`) |
+| `wpsec/scanner/wordpress_checks.py`, `security_headers.py`, `tls_checks.py`, `fingerprint.py` | Scritti e testati (`tests/unit/`) |
 | `wpsec/knowledge/catalog.py`, `remediation.py` | Scritti (CWE da ricontrollare su cwe.mitre.org) |
-| `wpsec/ai/prompts.py`, `validator.py`, `ollama_client.py`, `interface.py` | Scritti, non testati |
+| `wpsec/ai/prompts.py`, `validator.py`, `ollama_client.py`, `interface.py` | Scritti, testati tramite `assistant.py` e il finto Ollama |
+| `wpsec/ai/assistant.py` | Scritto e testato (`OllamaAssistant`: validazione, tentativi, disattivazione se Ollama è spento) |
 | `wpsec/integrations/network.py` | Scritto, non testato |
-| `wpsec/agents/base.py`, `reconnaissance_agent.py` | Scritti, non testati |
+| `wpsec/agents/`: Recon, WordPress, HTTP Security, Evidence Validation, Risk, Remediation, Reporting | Scritti e testati (`tests/unit/test_evidence_and_risk.py`, `test_http_security_agent.py`, `tests/integration/test_scan_pipeline.py`) |
+| `wpsec/core/orchestrator.py` | Scritto e testato (`tests/unit/test_orchestrator.py`): ordine topologico per fasi, requisiti, errori isolati, timeout per agente, annullamento, pianificatore LLM sperimentale (solo ordine, mai salto di controlli, ricorso all'ordine fisso) |
+| `wpsec/core/scan.py` | Scritto e testato: `run_scan()` con controlli preliminari (`ScanRefused`) prima di qualunque richiesta |
 | `tests/helpers.py` | Funzioni di supporto per i test |
-| `wpsec/ai/assistant.py` | **Da scrivere** (implementazione di `AIProvider`) |
-| Agenti HTTP Security, WordPress, Evidence, Risk, Remediation, Reporting, ZAP | **Da scrivere** |
-| Orchestratore e pianificatore | **Da scrivere** |
+| Agente ZAP (analisi passiva) | **Da scrivere** (`run_scan` per ora rifiuta `use_zap`) |
 | Database SQLite, report, confronto, API FastAPI, dashboard, CLI `main.py` | **Da scrivere** |
-| Test dei moduli v4, documentazione in `docs/` | **Da scrivere** |
+| Documentazione in `docs/` (METHODOLOGY.md, DEVELOPMENT_LOG.md citati nel codice) | **Da scrivere** |
 
-Verifiche eseguite finora: solo i 6 test di caratterizzazione della v3 (passano).
+Verifiche eseguite finora: 165 test passano (6 di caratterizzazione v3 + 159 dei moduli v4),
+copertura di `wpsec` circa 90%. Sul sito simulato `wp-tricky` la pipeline v4 corregge i tre
+errori noti della v3: utenti dietro il 403 del WAF -> inconcludente (non "protetto"),
+versione esposta nel feed -> confermata, "Index of" in un articolo -> falso positivo.
 
 ## 6. Prossimi passi consigliati
 
-1. Test dei moduli già scritti (client HTTP, analisi delle risposte, contesto).
-2. Agenti mancanti e orchestratore.
+1. ~~Test dei moduli già scritti (client HTTP, analisi delle risposte, contesto).~~ **Fatto.**
+2. ~~Agenti mancanti e orchestratore.~~ **Fatto** (manca solo l'agente ZAP).
 3. Database, report, confronto.
 4. API e dashboard.
 5. Benchmark sul laboratorio e documentazione.

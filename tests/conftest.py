@@ -88,3 +88,14 @@ def fake_ollama():
     f = FakeOllama()
     yield f
     f.server.shutdown()
+
+
+@pytest.fixture
+def unused_port():
+    """Porta locale su cui nessuno è in ascolto (connessione rifiutata)."""
+    import socket
+    s = socket.socket()
+    s.bind(("127.0.0.1", 0))
+    port = s.getsockname()[1]
+    s.close()
+    return port
