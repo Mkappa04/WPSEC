@@ -159,8 +159,20 @@ def cmd_compare(args, settings):
         print(f"Salvato in {p}")
 
 
+def cmd_timeline(args, settings):
+    issues = _store(settings).issue_timeline(args.host)
+    if not issues:
+        print("Nessuna scansione completata per questo host.")
+    for i in issues:
+        trail = " -> ".join(h["status"] for h in i["history"])
+        extra = f", riaperto {i['reopened']} volte" if i["reopened"] else ""
+        print(f"{i['current_status']:14} {i['title'][:45]:45} confermato {i['times_confirmed']}/"
+              f"{i['scans']}{extra}  [{trail}]")
+
+
 def cmd_import(args, settings):
     from wpsec.database.legacy import LegacyImportRefused, import_legacy_scan
+    from wpsec.database.store import ScanSealed
     store = _store(settings)
     hosts = set(args.authorized_host or [])
     code = 0
@@ -169,6 +181,8 @@ def cmd_import(args, settings):
             r = import_legacy_scan(f, hosts)
             store.save_scan(r)
             print(f"importato  {f} -> {r.id} ({len(r.findings)} risultati)")
+        except ScanSealed:
+            print(f"già importato  {f}")
         except LegacyImportRefused as e:
             print(f"rifiutato  {f}: {e}")
             code = EXIT_REFUSED
@@ -263,6 +277,10 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("--anonymize", action="store_true")
     c.add_argument("--save", action="store_true")
     c.set_defaults(func=cmd_compare)
+
+    tl = sub.add_parser("timeline", help="andamento dei problemi di un host nel tempo")
+    tl.add_argument("host")
+    tl.set_defaults(func=cmd_timeline)
 
     im = sub.add_parser("import-v3", help="importa scansioni JSON della v3")
     im.add_argument("files", nargs="+")

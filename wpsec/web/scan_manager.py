@@ -17,7 +17,7 @@ from dataclasses import dataclass, field
 from wpsec.config.settings import Settings
 from wpsec.core.models import ScanOptions, ScanResult, new_id
 from wpsec.core.scan import AUTO, ScanRefused, preflight, run_scan
-from wpsec.database.store import NotFound, Store
+from wpsec.database.store import FINAL_STATES, NotFound, Store
 
 SAVE_INTERVAL_S = 1.0
 
@@ -130,6 +130,8 @@ class ScanManager:
     # ------------------------------------------------------------ interno
     def _on_update(self, run: _Running, ctx):
         run.ctx = ctx
+        if ctx.result.status in FINAL_STATES:
+            return  # il salvataggio finale (che sigilla la scansione) lo fa work()
         now = time.monotonic()
         if now - run.last_save >= SAVE_INTERVAL_S:
             run.last_save = now

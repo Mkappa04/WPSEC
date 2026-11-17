@@ -210,4 +210,14 @@ def create_app(settings: Settings | None = None, store: Store | None = None, ai=
     def history(host: str, check_id: str):
         return store.finding_history(host, check_id)
 
+    @app.get("/api/timeline")
+    def timeline(host: str):
+        """Andamento di ogni problema dell'host nelle scansioni completate."""
+        return store.issue_timeline(host)
+
+    @app.get("/api/findings/{finding_id}/evidence")
+    def finding_evidence(finding_id: str):
+        return {"evidence": store.evidence_for_finding(finding_id),
+                "status_history": store.status_history(finding_id)}
+
     return app

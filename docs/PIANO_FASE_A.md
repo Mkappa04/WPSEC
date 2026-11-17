@@ -74,7 +74,7 @@ Le transizioni ammesse sono in `wpsec/core/models.py` e applicate da `wpsec/core
 | `wpsec/core/scan.py` | Scritto e testato: `run_scan()` con controlli preliminari (`ScanRefused`) prima di qualunque richiesta |
 | `tests/helpers.py` | Funzioni di supporto per i test |
 | Agente ZAP (analisi passiva) | **Da scrivere** (`run_scan` per ora rifiuta `use_zap`) |
-| `wpsec/database/store.py` | Scritto e testato: SQLite (libreria standard), risultato completo come JSON validato + indice per elenchi e storico, autorizzazioni revocabili (mai cancellate), schema versionato, scansioni interrotte marcate fallite |
+| `wpsec/database/schema.py`, `store.py`, `migrations.py` | Schema v2 scritto e testato (`docs/DATABASE.md`): tabelle normalizzate per scansioni, agenti, evidenze, risultati, cronologia degli stati, note IA, correzioni (template versionati), traccia; JSON completo come archivio; sigillo di immutabilità con trigger SQL; vista `finding_timeline` per l'andamento nel tempo; migrazione automatica dalla v1 |
 | `wpsec/database/legacy.py` | Scritto e testato: importazione delle scansioni v3; solo loopback o host dichiarati autorizzati, `aternos.org` sempre rifiutato, username mascherati |
 | `wpsec/comparison/compare.py` | Scritto e testato: "risolto" solo se confermato prima e assenza verificata dopo; inconcludente/errore/non applicabile = NON CONFRONTABILE (corregge la v3); confronto v3↔v4 per `legacy_id` con header aggregati |
 | `wpsec/reports/` | Scritto e testato: JSON, Markdown, HTML autonomo (escape + CSP senza script), PDF (fpdf2, DejaVu o ripiego Latin-1); IA sempre marcata; anonimizzazione per la tesi |
@@ -83,7 +83,7 @@ Le transizioni ammesse sono in `wpsec/core/models.py` e applicate da `wpsec/core
 | `main.py` | Scritto e testato: CLI `auth`, `scan` (anche `--lab URL`), `list`, `report`, `compare`, `import-v3`, `models`, `serve` (solo locale salvo `--allow-remote`) |
 | Documentazione in `docs/` (METHODOLOGY.md, DEVELOPMENT_LOG.md citati nel codice) | **Da scrivere** |
 
-Verifiche eseguite finora: 237 test passano (6 di caratterizzazione v3 + 231 dei moduli v4),
+Verifiche eseguite finora: 250 test passano (6 di caratterizzazione v3 + 244 dei moduli v4),
 copertura circa 92%. Prova manuale sul laboratorio Docker (WordPress reale, porte 8081-8083):
 vedi la sezione 8. Sul sito simulato `wp-tricky` la pipeline v4 corregge i tre
 errori noti della v3: utenti dietro il 403 del WAF -> inconcludente (non "protetto"),

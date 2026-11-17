@@ -12,7 +12,8 @@ from wpsec import __version__
 from wpsec.core.models import (Confidence, Finding, FindingKind, FindingStatus, ScanOptions,
                                ScanResult, Severity, now_utc)
 from wpsec.database.legacy import (LegacyImportRefused, import_legacy_scan, redact_legacy_text)
-from wpsec.database.store import SCHEMA_VERSION, NotFound, Store
+from wpsec.database.store import NotFound, ScanSealed, Store
+from wpsec.database.schema import SCHEMA_VERSION
 from wpsec.knowledge.catalog import CATALOG_VERSION
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -141,8 +142,9 @@ def test_import_v3_laboratorio(store):
     assert any(n.agent == "legacy-v3" for f in r.findings for n in f.ai_notes)
     store.save_scan(r)
     assert store.get_scan(r.id) == r
-    # stesso file importato due volte: stesso id, nessun duplicato
-    store.save_scan(import_legacy_scan(LEGACY[-1]))
+    # stesso file importato due volte: stesso id, rifiutato (sigillata), nessun duplicato
+    with pytest.raises(ScanSealed):
+        store.save_scan(import_legacy_scan(LEGACY[-1]))
     assert len(store.list_scans()) == 1
 
 

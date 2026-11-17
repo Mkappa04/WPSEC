@@ -70,6 +70,14 @@ def test_flusso_completo(client, mock_sites):
     hist = client.get("/api/history", params={"host": "127.0.0.1", "check_id": "wp.users_rest"})
     assert [h["status"] for h in hist.json()] == ["inconclusive", "inconclusive"]
 
+    # andamento nel tempo ed evidenze di un risultato
+    tl = {i["check_id"]: i for i in client.get("/api/timeline", params={"host": "127.0.0.1"}).json()}
+    assert tl["wp.version_disclosure"]["times_confirmed"] == 2
+    fid = next(f["id"] for f in scan["findings"] if f["check_id"] == "wp.version_disclosure")
+    det = client.get(f"/api/findings/{fid}/evidence").json()
+    assert {e["probe_id"] for e in det["evidence"]} == {"wp_feed"}
+    assert [h["to_status"] for h in det["status_history"]] == ["candidate", "confirmed"]
+
     # cancellazione
     assert client.delete(f"/api/scans/{scan['id']}").status_code == 204
     assert client.get(f"/api/scans/{scan['id']}").status_code == 404

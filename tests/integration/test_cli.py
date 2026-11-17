@@ -38,6 +38,8 @@ def test_scan_lab_report_e_confronto(run, mock_sites, capsys):
     assert run("compare", "--host", "127.0.0.1", "--save") == 0
     out = capsys.readouterr().out
     assert "0 risolti" in out and list((run.dir / "reports").glob("confronto_*.md"))
+    assert run("timeline", "127.0.0.1") == 0
+    assert "confermato 2/2" in capsys.readouterr().out
 
 
 def test_auth_add_sito_reale_con_documento(run, tmp_path, capsys):
