@@ -118,7 +118,7 @@ def main():
     print(f"=== BENCHMARK {descr}: {a.ripetizioni} ripetizioni, {'con' if a.con_burp else 'senza'} Burp ===")
 
     for b in bersagli:
-        esiti = {cid: [] for cid in b["atteso"]}
+        esiti = {cid: [] for cid in b.get("atteso_v3", b["atteso"])}
         tempi_b, ultimo, visti = [], {}, set()
         for _ in range(a.ripetizioni):
             ris, sec, st = esegui(b["url"], a)
@@ -126,13 +126,13 @@ def main():
             stat_run.append(st)
             ultimo = ris
             visti |= {cid for cid, f in ris.items() if f["esito"] != "INFO"}
-            for cid in b["atteso"]:
+            for cid in b.get("atteso_v3", b["atteso"]):
                 esiti[cid].append(ris[cid]["esito"] if cid in ris else "NON ESEGUITO")
         tempi[b["nome"]] = tempi_b
 
         # Ogni ripetizione conta: con l'agente l'IA può saltare controlli diversi
         # a ogni run, e guardare solo l'ultima nasconderebbe i problemi persi.
-        for cid, atteso in b["atteso"].items():
+        for cid, atteso in b.get("atteso_v3", b["atteso"]).items():
             serie = esiti[cid]
             if len(set(serie)) > 1:
                 instabili.append((b["nome"], cid, serie))
@@ -144,7 +144,7 @@ def main():
                               "trovato": conteggio(serie), "classe": conteggio(classi),
                               "esiti_per_run": serie, "classe_peggiore": peggiore,
                               "evidenza": ultimo.get(cid, {}).get("evidenza", "controllo non eseguito")})
-        extra = visti - set(b["atteso"])
+        extra = visti - set(b.get("atteso_v3", b["atteso"]))
         if extra:
             print(f"  [!] {b['nome']}: controlli senza ground truth (ignorati): {sorted(extra)}")
 

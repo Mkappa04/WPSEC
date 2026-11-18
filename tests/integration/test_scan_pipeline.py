@@ -240,3 +240,41 @@ def test_scansione_archiviata_riportata_e_confrontata(mock_sites, tmp_path):
     c = compare(vuln, again)
     assert c.counts()["resolved"] == 0 and c.counts()["new"] == 0
     assert any(r.outcome == Outcome.STILL_OPEN for r in c.rows)
+
+
+def test_versione_nel_feed_con_permalink_semplici():
+    """WordPress reale con permalink semplici: /feed/ 404, la versione è in ?feed=rss2
+    (lacuna trovata sul laboratorio Docker il 17/11/2026)."""
+    import threading
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+    class H(BaseHTTPRequestHandler):
+        def log_message(self, *a):
+            pass
+
+        def do_GET(self):
+            if self.path == "/":
+                code, body = 200, '<html><head><link rel="https://api.w.org/"></head><body></body></html>'
+            elif self.path == "/?feed=rss2":
+                code, body = 200, ("<rss><channel><generator>https://wordpress.org/?v=6.9.4"
+                                   "</generator></channel></rss>")
+            else:
+                code, body = 404, "non trovato"
+            b = body.encode()
+            self.send_response(code)
+            self.send_header("Content-Length", str(len(b)))
+            self.end_headers()
+            self.wfile.write(b)
+
+        def do_POST(self):
+            self.do_GET()
+
+    srv = ThreadingHTTPServer(("127.0.0.1", 0), H)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    try:
+        r = _scan(f"http://127.0.0.1:{srv.server_address[1]}")
+        v = next(f for f in r.findings if f.check_id == "wp.version_disclosure")
+        assert v.status == S.CONFIRMED and v.details["version"] == "6.9.4"
+        assert v.details["sources"] == {"feed": "6.9.4"}
+    finally:
+        srv.shutdown()

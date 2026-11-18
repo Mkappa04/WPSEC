@@ -1,5 +1,6 @@
 """CLI main.py sui siti simulati (database in una cartella temporanea)."""
 
+import json
 from pathlib import Path
 
 import pytest
@@ -59,11 +60,16 @@ def test_errori_restituiscono_codice_2(run, mock_sites, capsys):
     assert run("compare", "--host", "127.0.0.1") == 2
 
 
-def test_import_v3(run, capsys):
+def test_import_v3(run, capsys, tmp_path):
     files = sorted(str(p) for p in (ROOT / "scansioni").glob("*.json"))
     if not files:
         pytest.skip("nessuna scansione v3")
-    code = run("import-v3", *files)
+    escluso = tmp_path / "aternos.org_20261113_123448.json"  # sintetico: host sempre escluso
+    escluso.write_text(json.dumps({
+        "scanner": "3.0", "data": "2026-11-13T12:34:48", "bersaglio": "https://aternos.org",
+        "risultati": [{"id": "xmlrpc", "titolo": "XML-RPC", "esito": "PROTETTO",
+                       "gravita": "Media", "evidenza": "HTTP 403"}]}))
+    code = run("import-v3", *files, str(escluso))
     out = capsys.readouterr().out
     assert "rifiutato" in out and "aternos.org" in out  # mai importato
     assert code == 2  # almeno un file rifiutato

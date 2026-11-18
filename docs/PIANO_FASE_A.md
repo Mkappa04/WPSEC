@@ -9,9 +9,12 @@ le decisioni prese e lo stato reale del codice.
   un'autorizzazione di tipo laboratorio (127.0.0.1). Per i siti remoti è eliminata.
 - **Lingua**: identificatori del codice in inglese; interfaccia e documentazione in italiano.
 - **Git**: repository inizializzato; lo stato originale è nel primo commit (`361e222`).
-- **Storico**: le scansioni di `aternos.org` in `scansioni/` sono escluse dall'importazione
-  (nessuna autorizzazione documentata). I dati del laboratorio e dei siti autorizzati vanno
-  anonimizzati prima dell'uso nella tesi.
+- **Storico**: le scansioni di `aternos.org` sono escluse dall'importazione (nessuna
+  autorizzazione documentata). Il 18/11/2026 sono stati rimossi dal repository i file v3
+  di siti reali (le scansioni di `aternos.org` e di un altro sito reale, i report
+  generati) e gli script v3 sostituiti dalla v4 (`webapp_scanner.py`, `confronta.py`);
+  restano nel primo commit. In `scansioni/` restano solo le scansioni del laboratorio.
+  I dati dei siti autorizzati vanno anonimizzati prima dell'uso nella tesi.
 - **Commit**: si fanno solo dopo conferma esplicita dello studente.
 
 ## 2. Principio guida
@@ -83,7 +86,7 @@ Le transizioni ammesse sono in `wpsec/core/models.py` e applicate da `wpsec/core
 | `main.py` | Scritto e testato: CLI `auth`, `scan` (anche `--lab URL`), `list`, `report`, `compare`, `import-v3`, `models`, `serve` (solo locale salvo `--allow-remote`) |
 | Documentazione in `docs/` (METHODOLOGY.md, DEVELOPMENT_LOG.md citati nel codice) | **Da scrivere** |
 
-Verifiche eseguite finora: 250 test passano (6 di caratterizzazione v3 + 244 dei moduli v4),
+Verifiche eseguite finora: 269 test passano (18/11/2026),
 copertura circa 92%. Prova manuale sul laboratorio Docker (WordPress reale, porte 8081-8083):
 vedi la sezione 8. Sul sito simulato `wp-tricky` la pipeline v4 corregge i tre
 errori noti della v3: utenti dietro il 403 del WAF -> inconcludente (non "protetto"),
@@ -95,7 +98,8 @@ versione esposta nel feed -> confermata, "Index of" in un articolo -> falso posi
 2. ~~Agenti mancanti e orchestratore.~~ **Fatto** (manca solo l'agente ZAP).
 3. ~~Database, report, confronto.~~ **Fatto.**
 4. ~~API e dashboard.~~ **Fatto** (dashboard non ancora provata in un browser).
-5. Benchmark sul laboratorio e documentazione.
+5. Benchmark sul laboratorio (**fatto**, vedi sezione 9) e documentazione (da fare:
+   `METHODOLOGY.md`, `DEVELOPMENT_LOG.md`).
 
 ## 7. Pianificazione delle 375 ore
 
@@ -123,5 +127,45 @@ La ground truth è scritta con la semantica della v3. Sul WordPress reale la v4 
 | wp-hard | header | PROTETTO | CSP confermato come *debole* | il CSP contiene `'unsafe-inline'`; la v3 controllava solo la presenza dell'header |
 | tutti | header informativi | (non previsto) | confermato | `Server: Apache/2.4.67 (Debian)`, `X-Powered-By: PHP/8.3.31` |
 
-Da decidere prima del benchmark (punto 5): aggiornare la ground truth alla semantica v4
-(consigliato, motivando ogni cambio) oppure confrontare con la v3 solo sui controlli comuni.
+**Deciso**: la ground truth è stata aggiornata alla semantica v4 (`lab/ground_truth.json`
+versione 2, verificata a mano il 17/11/2026 con `lab.sh verifica`). La ground truth originale
+della v3 è conservata in `atteso_v3` per riprodurre i benchmark storici (`lab/benchmark.py`).
+Il confronto v3/v4 si fa sui 6 controlli comuni rispetto alla stessa ground truth v4.
+
+Lacuna trovata durante la verifica e corretta: con i permalink semplici `/feed/` risponde
+404 e la versione è esposta solo in `?feed=rss2`. Aggiunta la sonda `wp_feed_alt` e il test
+`test_versione_nel_feed_con_permalink_semplici`.
+
+## 9. Benchmark v4 sul laboratorio (18/11/2026)
+
+Script: `lab/benchmark_v4.py`, ground truth v2. Risultati completi in
+`lab/risultati_benchmark/benchmark_v4_20261118_141740.*` (v3 e v4, 3 ripetizioni) e
+`benchmark_v4_20261118_144226.*` (tutte le configurazioni, 2 ripetizioni, IA qwen3.5:4b).
+
+Controlli comuni v3/v4 (6 controlli x 3 bersagli, stessa ground truth):
+
+| Config | Precisione | Richiamo | F1 | FP | FN |
+|---|---|---|---|---|---|
+| v3 | 1,0 | 0,769 | 0,869 | 0 | 3 per ripetizione |
+| v4, v4-ia, v4-llm | 1,0 | 1,0 | 1,0 | 0 | 0 |
+
+I FN della v3 sono sempre gli stessi: versione su wp-hard e wp-mixed (esposta solo nel `?ver=`
+degli script) e CSP debole su wp-hard (la v3 controlla solo la presenza dell'header).
+
+Tutti i 15 controlli della v4: precisione, richiamo, accuratezza e copertura 1,0 in tutte le
+configurazioni, nessun inconcludente, nessun NA-X, esiti identici fra le ripetizioni.
+L'IA non cambia gli esiti (come previsto dal principio guida): cambia solo i tempi.
+
+| Config | Tempo medio | Max | Richieste | Chiamate IA valide / non valide / errori / abbandonate |
+|---|---|---|---|---|
+| v3 | 0,2-0,5 s | 0,8 s | 8 | - |
+| v4 | 0,14 s | 0,16 s | 13,3 | - |
+| v4-ia | 63 s | 145 s | 13,3 | 81 / 9 / 17 / 5 su 107 |
+| v4-llm | 67 s | 141 s | 13,3 | 95 / 6 / 7 / 3 su 108 |
+
+Pianificatore LLM: 12 decisioni, 0 non valide, 0 ricorsi all'ordine fisso (contro 15 run su 15
+con ricorso nei benchmark dell'agente v3 del 13-14/11). Le risposte IA scartate dal validatore
+o in errore non hanno mai prodotto un esito sbagliato: la nota viene semplicemente omessa.
+
+Limiti: tre soli bersagli, tutti senza HTTPS (HSTS, cookie e redirect HTTPS risultano
+`not_applicable`); WAF e casi ambigui sono coperti solo dai siti simulati nei test.

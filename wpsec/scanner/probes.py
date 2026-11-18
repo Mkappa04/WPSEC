@@ -55,6 +55,7 @@ _PROBES = [
           cacheable=False),
     Probe("wp_uploads", "GET", "/wp-content/uploads/", "Cartella uploads (directory listing)"),
     Probe("wp_feed", "GET", "/feed/", "Feed RSS (tag generator)"),
+    Probe("wp_feed_alt", "GET", "/?feed=rss2", "Feed RSS (permalink semplici)"),
     Probe("wp_readme", "GET", "/readme.html", "readme.html di WordPress"),
     Probe("wp_login", "GET", "/wp-login.php", "Pagina di login (solo raggiungibilità)",
           follow_redirects=False),

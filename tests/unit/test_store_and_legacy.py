@@ -148,10 +148,19 @@ def test_import_v3_laboratorio(store):
     assert len(store.list_scans()) == 1
 
 
-def test_import_v3_host_escluso():
-    p = ROOT / "scansioni" / "aternos.org_20261113_123448.json"
-    if not p.exists():
-        pytest.skip("file non presente")
+def _scansione_v3_sintetica(cartella, bersaglio):
+    """File v3 minimo, creato al momento: nessun dato reale nel repository."""
+    host = bersaglio.split("://", 1)[1]
+    p = cartella / f"{host}_20261113_123448.json"
+    p.write_text(json.dumps({
+        "scanner": "3.0", "data": "2026-11-13T12:34:48", "bersaglio": bersaglio,
+        "risultati": [{"id": "xmlrpc", "titolo": "XML-RPC", "esito": "PROTETTO",
+                       "gravita": "Media", "evidenza": "HTTP 403"}]}))
+    return p
+
+
+def test_import_v3_host_escluso(tmp_path):
+    p = _scansione_v3_sintetica(tmp_path, "https://aternos.org")
     with pytest.raises(LegacyImportRefused, match="escluso"):
         import_legacy_scan(p, authorized_hosts={"aternos.org"})
 

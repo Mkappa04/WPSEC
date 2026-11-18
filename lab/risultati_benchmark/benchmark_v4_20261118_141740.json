@@ -1,0 +1,960 @@
+{
+  "data": "2026-11-18T14:17:40",
+  "ripetizioni": 3,
+  "modello": "qwen3.5:4b",
+  "bersagli": [
+    "wp-vuln",
+    "wp-hard",
+    "wp-mixed"
+  ],
+  "ground_truth": {
+    "versione": 2,
+    "verifica": {
+      "data": "2026-11-17",
+      "metodo": "richieste curl indipendenti dallo scanner (lab.sh verifica, ampliato con ?rest_route=, ?feed=rss2, ?ver= degli script e header informativi)",
+      "wordpress": "6.9.4 (immagine wordpress:6-apache), permalink semplici",
+      "server": "Apache/2.4.67 (Debian), PHP/8.3.31"
+    }
+  },
+  "risultati": [
+    {
+      "config": "v3",
+      "ripetizioni": 3,
+      "metriche_complete": null,
+      "metriche_comuni": {
+        "conteggi": {
+          "TP": 30,
+          "TN": 15,
+          "FP": 0,
+          "FN": 9,
+          "INC": 0,
+          "ERR": 0,
+          "MISS": 0,
+          "NA": 0,
+          "NA-X": 0
+        },
+        "precisione": 1.0,
+        "richiamo": 0.769,
+        "f1": 0.869,
+        "accuratezza": 0.833,
+        "copertura": 1.0,
+        "inconcludenti": 0,
+        "totale": 54
+      },
+      "efficienza": {
+        "tempo_medio_s": 0.21,
+        "tempo_dev_std_s": 0.03,
+        "tempo_max_s": 0.29,
+        "richieste_medie": 8,
+        "run": 9
+      },
+      "instabili": [],
+      "bersagli": [
+        {
+          "bersaglio": "wp-vuln",
+          "comuni": [
+            {
+              "controllo": "utenti",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "author",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "xmlrpc",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "versione",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "uploads",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "header",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            }
+          ]
+        },
+        {
+          "bersaglio": "wp-hard",
+          "comuni": [
+            {
+              "controllo": "utenti",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "author",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "xmlrpc",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "versione",
+              "atteso": "confirmed",
+              "trovato": "not_present",
+              "classe": "FN",
+              "classe_peggiore": "FN",
+              "stabile": true
+            },
+            {
+              "controllo": "uploads",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "header",
+              "atteso": "confirmed",
+              "trovato": "not_present",
+              "classe": "FN",
+              "classe_peggiore": "FN",
+              "stabile": true
+            }
+          ]
+        },
+        {
+          "bersaglio": "wp-mixed",
+          "comuni": [
+            {
+              "controllo": "utenti",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "author",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "xmlrpc",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "versione",
+              "atteso": "confirmed",
+              "trovato": "not_present",
+              "classe": "FN",
+              "classe_peggiore": "FN",
+              "stabile": true
+            },
+            {
+              "controllo": "uploads",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "header",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            }
+          ]
+        }
+      ],
+      "run": [
+        {
+          "secondi": 0.294,
+          "richieste": 8,
+          "bersaglio": "wp-vuln"
+        },
+        {
+          "secondi": 0.185,
+          "richieste": 8,
+          "bersaglio": "wp-vuln"
+        },
+        {
+          "secondi": 0.194,
+          "richieste": 8,
+          "bersaglio": "wp-vuln"
+        },
+        {
+          "secondi": 0.229,
+          "richieste": 8,
+          "bersaglio": "wp-hard"
+        },
+        {
+          "secondi": 0.199,
+          "richieste": 8,
+          "bersaglio": "wp-hard"
+        },
+        {
+          "secondi": 0.199,
+          "richieste": 8,
+          "bersaglio": "wp-hard"
+        },
+        {
+          "secondi": 0.236,
+          "richieste": 8,
+          "bersaglio": "wp-mixed"
+        },
+        {
+          "secondi": 0.195,
+          "richieste": 8,
+          "bersaglio": "wp-mixed"
+        },
+        {
+          "secondi": 0.192,
+          "richieste": 8,
+          "bersaglio": "wp-mixed"
+        }
+      ]
+    },
+    {
+      "config": "v4",
+      "ripetizioni": 3,
+      "metriche_complete": {
+        "conteggi": {
+          "TP": 72,
+          "TN": 36,
+          "FP": 0,
+          "FN": 0,
+          "INC": 0,
+          "ERR": 0,
+          "MISS": 0,
+          "NA": 27,
+          "NA-X": 0
+        },
+        "precisione": 1.0,
+        "richiamo": 1.0,
+        "f1": 1.0,
+        "accuratezza": 1.0,
+        "copertura": 1.0,
+        "inconcludenti": 0,
+        "totale": 135
+      },
+      "metriche_comuni": {
+        "conteggi": {
+          "TP": 39,
+          "TN": 15,
+          "FP": 0,
+          "FN": 0,
+          "INC": 0,
+          "ERR": 0,
+          "MISS": 0,
+          "NA": 0,
+          "NA-X": 0
+        },
+        "precisione": 1.0,
+        "richiamo": 1.0,
+        "f1": 1.0,
+        "accuratezza": 1.0,
+        "copertura": 1.0,
+        "inconcludenti": 0,
+        "totale": 54
+      },
+      "efficienza": {
+        "tempo_medio_s": 0.14,
+        "tempo_dev_std_s": 0.01,
+        "tempo_max_s": 0.16,
+        "richieste_medie": 13.3,
+        "run": 9
+      },
+      "instabili": [],
+      "bersagli": [
+        {
+          "bersaglio": "wp-vuln",
+          "comuni": [
+            {
+              "controllo": "utenti",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "author",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "xmlrpc",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "versione",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "uploads",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "header",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            }
+          ],
+          "completo": [
+            {
+              "controllo": "wp.users_rest",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.author_enum",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.xmlrpc",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.version_disclosure",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.directory_listing",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.debug_log",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.hsts",
+              "atteso": "not_applicable",
+              "trovato": "not_applicable",
+              "classe": "NA",
+              "classe_peggiore": "NA",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.csp",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.xfo",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.xcto",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.referrer",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.permissions",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.info_disclosure",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.cookies",
+              "atteso": "not_applicable",
+              "trovato": "not_applicable",
+              "classe": "NA",
+              "classe_peggiore": "NA",
+              "stabile": true
+            },
+            {
+              "controllo": "http.https_redirect",
+              "atteso": "not_applicable",
+              "trovato": "not_applicable",
+              "classe": "NA",
+              "classe_peggiore": "NA",
+              "stabile": true
+            }
+          ]
+        },
+        {
+          "bersaglio": "wp-hard",
+          "comuni": [
+            {
+              "controllo": "utenti",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "author",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "xmlrpc",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "versione",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "uploads",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "header",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            }
+          ],
+          "completo": [
+            {
+              "controllo": "wp.users_rest",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.author_enum",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.xmlrpc",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.version_disclosure",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.directory_listing",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.debug_log",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.hsts",
+              "atteso": "not_applicable",
+              "trovato": "not_applicable",
+              "classe": "NA",
+              "classe_peggiore": "NA",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.csp",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.xfo",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.xcto",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.referrer",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.permissions",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "http.info_disclosure",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.cookies",
+              "atteso": "not_applicable",
+              "trovato": "not_applicable",
+              "classe": "NA",
+              "classe_peggiore": "NA",
+              "stabile": true
+            },
+            {
+              "controllo": "http.https_redirect",
+              "atteso": "not_applicable",
+              "trovato": "not_applicable",
+              "classe": "NA",
+              "classe_peggiore": "NA",
+              "stabile": true
+            }
+          ]
+        },
+        {
+          "bersaglio": "wp-mixed",
+          "comuni": [
+            {
+              "controllo": "utenti",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "author",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "xmlrpc",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "versione",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "uploads",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "header",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            }
+          ],
+          "completo": [
+            {
+              "controllo": "wp.users_rest",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.author_enum",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.xmlrpc",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.version_disclosure",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.directory_listing",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "wp.debug_log",
+              "atteso": "not_present",
+              "trovato": "not_present",
+              "classe": "TN",
+              "classe_peggiore": "TN",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.hsts",
+              "atteso": "not_applicable",
+              "trovato": "not_applicable",
+              "classe": "NA",
+              "classe_peggiore": "NA",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.csp",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.xfo",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.xcto",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.referrer",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.header.permissions",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.info_disclosure",
+              "atteso": "confirmed",
+              "trovato": "confirmed",
+              "classe": "TP",
+              "classe_peggiore": "TP",
+              "stabile": true
+            },
+            {
+              "controllo": "http.cookies",
+              "atteso": "not_applicable",
+              "trovato": "not_applicable",
+              "classe": "NA",
+              "classe_peggiore": "NA",
+              "stabile": true
+            },
+            {
+              "controllo": "http.https_redirect",
+              "atteso": "not_applicable",
+              "trovato": "not_applicable",
+              "classe": "NA",
+              "classe_peggiore": "NA",
+              "stabile": true
+            }
+          ]
+        }
+      ],
+      "run": [
+        {
+          "secondi": 0.16,
+          "richieste": 13,
+          "stato": "completed",
+          "scan_id": "scan-f6188097965d",
+          "modello": "",
+          "ia": {},
+          "pianificatore": {},
+          "note_ia": 0,
+          "sintesi_ia": false,
+          "agenti_falliti": [],
+          "bersaglio": "wp-vuln"
+        },
+        {
+          "secondi": 0.14,
+          "richieste": 13,
+          "stato": "completed",
+          "scan_id": "scan-c57a99777b6a",
+          "modello": "",
+          "ia": {},
+          "pianificatore": {},
+          "note_ia": 0,
+          "sintesi_ia": false,
+          "agenti_falliti": [],
+          "bersaglio": "wp-vuln"
+        },
+        {
+          "secondi": 0.14,
+          "richieste": 13,
+          "stato": "completed",
+          "scan_id": "scan-f6840873f2dc",
+          "modello": "",
+          "ia": {},
+          "pianificatore": {},
+          "note_ia": 0,
+          "sintesi_ia": false,
+          "agenti_falliti": [],
+          "bersaglio": "wp-vuln"
+        },
+        {
+          "secondi": 0.15,
+          "richieste": 14,
+          "stato": "completed",
+          "scan_id": "scan-a1f3ce345498",
+          "modello": "",
+          "ia": {},
+          "pianificatore": {},
+          "note_ia": 0,
+          "sintesi_ia": false,
+          "agenti_falliti": [],
+          "bersaglio": "wp-hard"
+        },
+        {
+          "secondi": 0.14,
+          "richieste": 14,
+          "stato": "completed",
+          "scan_id": "scan-3df4a94c17b6",
+          "modello": "",
+          "ia": {},
+          "pianificatore": {},
+          "note_ia": 0,
+          "sintesi_ia": false,
+          "agenti_falliti": [],
+          "bersaglio": "wp-hard"
+        },
+        {
+          "secondi": 0.15,
+          "richieste": 14,
+          "stato": "completed",
+          "scan_id": "scan-1c2062422427",
+          "modello": "",
+          "ia": {},
+          "pianificatore": {},
+          "note_ia": 0,
+          "sintesi_ia": false,
+          "agenti_falliti": [],
+          "bersaglio": "wp-hard"
+        },
+        {
+          "secondi": 0.14,
+          "richieste": 13,
+          "stato": "completed",
+          "scan_id": "scan-d2969c11d02d",
+          "modello": "",
+          "ia": {},
+          "pianificatore": {},
+          "note_ia": 0,
+          "sintesi_ia": false,
+          "agenti_falliti": [],
+          "bersaglio": "wp-mixed"
+        },
+        {
+          "secondi": 0.14,
+          "richieste": 13,
+          "stato": "completed",
+          "scan_id": "scan-500d1f41c059",
+          "modello": "",
+          "ia": {},
+          "pianificatore": {},
+          "note_ia": 0,
+          "sintesi_ia": false,
+          "agenti_falliti": [],
+          "bersaglio": "wp-mixed"
+        },
+        {
+          "secondi": 0.14,
+          "richieste": 13,
+          "stato": "completed",
+          "scan_id": "scan-d424ded97752",
+          "modello": "",
+          "ia": {},
+          "pianificatore": {},
+          "note_ia": 0,
+          "sintesi_ia": false,
+          "agenti_falliti": [],
+          "bersaglio": "wp-mixed"
+        }
+      ]
+    }
+  ]
+}

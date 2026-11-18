@@ -90,6 +90,9 @@ class WordPressAgent(BaseAgent):
             if home is None:
                 home = ctx.client.probe("home")
             feed = ctx.client.probe("wp_feed", fresh=fresh)
+            if not (feed.ok and feed.status == 200):
+                # con i permalink semplici /feed/ non esiste: si prova ?feed=rss2
+                feed = ctx.client.probe("wp_feed_alt", fresh=fresh)
             readme = ctx.client.probe("wp_readme", fresh=fresh)
             sources = {
                 "meta": wc.version_from_meta(home.body) if home.ok else None,

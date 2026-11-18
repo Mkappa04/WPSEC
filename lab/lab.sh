@@ -51,10 +51,17 @@ case "$cmd" in
       echo -n "?author=1        : "; curl -s -o /dev/null -w "HTTP %{http_code} -> %{url_effective}\n" -L "$u/?author=1"
       echo -n "xmlrpc listMethods: "; curl -s -X POST -H 'Content-Type: text/xml' \
         -d '<?xml version="1.0"?><methodCall><methodName>system.listMethods</methodName></methodCall>' \
-        -w " [HTTP %{http_code}]\n" "$u/xmlrpc.php" | head -c 120; echo
+        -w " [HTTP %{http_code}]\n" "$u/xmlrpc.php" | head -c 120 || true; echo
       echo "header sicurezza :"; curl -sI "$u/" | grep -iE "strict-transport|content-security|x-frame|x-content-type|referrer-policy|permissions-policy" || echo "  (nessuno)"
       echo -n "meta generator   : "; curl -s "$u/" | grep -io '<meta name="generator"[^>]*>' || echo "assente"
       echo -n "uploads listing  : "; curl -s -o /dev/null -w "HTTP %{http_code}\n" "$u/wp-content/uploads/"
+      # controlli aggiunti per la ground truth v4 (permalink semplici, valori degli header)
+      echo -n "utenti ?rest_route: "; curl -s -o /dev/null -w "HTTP %{http_code}\n" "$u/?rest_route=/wp/v2/users"
+      echo -n "feed ?feed=rss2  : "; curl -s "$u/?feed=rss2" | grep -o "<generator>[^<]*</generator>" || echo "nessun generator"
+      echo -n "?ver= core       : "; curl -s "$u/" | grep -oE "/wp-includes/[^\"' ]+\?ver=[0-9]+\.[0-9.]+" | sort -u | tr '\n' ' '; echo
+      echo "header informativi:"; curl -sI "$u/" | grep -iE "^(server|x-powered-by):" || echo "  (nessuno)"
+      echo -n "debug.log        : "; curl -s -o /dev/null -w "HTTP %{http_code}\n" "$u/wp-content/debug.log"
+      echo -n "cookie sulla home: "; curl -sI "$u/" | grep -ic "^set-cookie" || true
     done
     ;;
   zap)

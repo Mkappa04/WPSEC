@@ -81,7 +81,7 @@ def fabbrica(fixes, waf=False, tricky=False):
                     return self._r(200, "<?xml version=\"1.0\"?><rss><channel>"
                                    "<generator>https://wordpress.org/?v=6.8.1</generator>"
                                    "</channel></rss>", "application/rss+xml")
-            if p.startswith("/feed"):
+            if p.startswith("/feed") or p.startswith("/?feed="):
                 gen = "" if "versione" in fixes else "<generator>https://wordpress.org/?v=6.8.1</generator>"
                 return self._r(200, f"<?xml version=\"1.0\"?><rss><channel>{gen}</channel></rss>",
                                "application/rss+xml")
