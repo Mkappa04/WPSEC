@@ -8,12 +8,14 @@ le decisioni prese e lo stato reale del codice.
 - **ZAP**: solo analisi passiva; la scansione attiva è ammessa unicamente con
   un'autorizzazione di tipo laboratorio (127.0.0.1). Per i siti remoti è eliminata.
 - **Lingua**: identificatori del codice in inglese; interfaccia e documentazione in italiano.
-- **Git**: repository inizializzato; lo stato originale è nel primo commit (`361e222`).
+- **Git**: repository inizializzato; lo stato originale del prototipo è nel primo commit.
 - **Storico**: le scansioni di `aternos.org` sono escluse dall'importazione (nessuna
   autorizzazione documentata). Il 18/11/2026 sono stati rimossi dal repository i file v3
   di siti reali (le scansioni di `aternos.org` e di un altro sito reale, i report
-  generati) e gli script v3 sostituiti dalla v4 (`webapp_scanner.py`, `confronta.py`);
-  restano nel primo commit. In `scansioni/` restano solo le scansioni del laboratorio.
+  generati) e gli script v3 sostituiti dalla v4 (`webapp_scanner.py`, `confronta.py`).
+  Il 19/11/2026 i file dei siti reali sono stati tolti anche dalla storia di Git prima della
+  pubblicazione; la storia completa è conservata fuori dal repository. In `scansioni/`
+  restano solo le scansioni del laboratorio.
   I dati dei siti autorizzati vanno anonimizzati prima dell'uso nella tesi.
 - **Commit**: si fanno solo dopo conferma esplicita dello studente.
 
