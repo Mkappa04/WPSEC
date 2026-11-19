@@ -3,23 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>wpsec — Dashboard</title>
+  <meta name="color-scheme" content="light dark">
+  <title>wpsec</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/app.js" defer></script>
 </head>
 <body>
-  <header class="top">
-    <div class="brand">wpsec <span class="muted" id="version"></span></div>
-    <nav>
-      <a href="#/scans" data-route="scans">Scansioni</a>
-      <a href="#/new" data-route="new">Nuova scansione</a>
-      <a href="#/auth" data-route="auth">Autorizzazioni</a>
-      <a href="#/compare" data-route="compare">Confronto</a>
-    </nav>
-  </header>
-  <main id="view" aria-live="polite"></main>
-  <footer class="muted">
-    Analisi non invasiva di siti autorizzati. Il codice decide richieste e conferme; l'IA locale spiega soltanto.
-  </footer>
+  <a class="skip" href="#view">Vai al contenuto</a>
+  <div class="shell">
+    <header class="rail">
+      <div class="brand"><a href="#/overview">wpsec</a> <span class="mono dim" id="version"></span></div>
+      <nav aria-label="Sezioni">
+        <ul class="nav-main">
+          <li><a href="#/overview" data-route="overview">Panoramica</a></li>
+          <li><a href="#/scans" data-route="scans">Storico</a></li>
+          <li><a href="#/compare" data-route="compare">Confronto</a></li>
+          <li><a href="#/trend" data-route="trend">Andamento</a></li>
+        </ul>
+        <ul class="nav-tools">
+          <li><a href="#/new" data-route="new">Nuova scansione</a></li>
+          <li><a href="#/auth" data-route="auth">Autorizzazioni</a></li>
+        </ul>
+      </nav>
+      <p class="rail-note">Analisi non invasiva di siti autorizzati. Il codice decide richieste e conferme; l'IA locale spiega soltanto.</p>
+    </header>
+    <main id="view" tabindex="-1" aria-live="polite"></main>
+  </div>
 </body>
 </html>

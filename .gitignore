@@ -8,3 +8,4 @@ htmlcov/
 data/
 output/
 *.egg-info/
+.preview-data/
